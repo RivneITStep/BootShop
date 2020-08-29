@@ -10,6 +10,8 @@ const sequalize = require("./helper/database");
 
 // middleware
 const mainRoutes = require("./routes/mainRoutes");
+//Error Page
+const errorController = require('./controller/errorController')
 
 
 app.set("view engine", "ejs");
@@ -18,6 +20,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "static")));
 
 app.use(mainRoutes);
+app.use(errorController.get404)
 
 sequalize
   .sync()
