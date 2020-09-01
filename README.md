@@ -55,4 +55,4 @@ BootShop
 
 ### Template
 
-Скачати шаблон сайту можна [`ТУТ`](https://drive.google.com/file/d/1lFp1yxijDRRLpY1einSxZrs96saOaaTK/view?usp=sharing)
+Скачати шаблон сайту можна [`ТУТ`](https://drive.google.com/drive/folders/1x8o8f2uDqaRO4F5H_HtGPvzh78PQHbwC?usp=sharing)
