@@ -37,30 +37,30 @@ pipeline  {
                 '''
             }
         }
-        stage("docker stop") {
-            steps {
-                echo " ============== stoping all images =================="
-                sh '''
-                docker stop bootshop2
-                '''
-            }
-        } 
-        stage("docker remove") {
-            steps {
-                echo " ============== removing all docker containers =================="
-                sh '''
-                docker rm bootshop2
-                '''
-            }
-        }
-        stage("docker run") {
-            steps {
-                echo " ============== starting chatterbox server =================="
-                sh '''
-                docker run -d --restart=always --name bootshop2 -p 80:8000 parchuk/bootshop
-                '''
-            }
-        }
+    //     stage("docker stop") {
+    //         steps {
+    //             echo " ============== stoping all images =================="
+    //             sh '''
+    //             docker stop bootshop2
+    //             '''
+    //         }
+    //     } 
+    //     stage("docker remove") {
+    //         steps {
+    //             echo " ============== removing all docker containers =================="
+    //             sh '''
+    //             docker rm bootshop2
+    //             '''
+    //         }
+    //     }
+    //     stage("docker run") {
+    //         steps {
+    //             echo " ============== starting chatterbox server =================="
+    //             sh '''
+    //             docker run -d --restart=always --name bootshop2 -p 80:8000 parchuk/bootshop
+    //             '''
+    //         }
+    //     }
 
     }
 }
