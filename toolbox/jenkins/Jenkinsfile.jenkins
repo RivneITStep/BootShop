@@ -15,7 +15,7 @@ pipeline  {
             steps {
                 echo 'Creating docker image ...'
                 dir('.'){
-                    sh "docker build -t parchuk/frontEnd94 . "
+                    sh "docker build -t parchuk/frontend94 . "
                 }
             }
         }
@@ -33,7 +33,7 @@ pipeline  {
             steps {
                 echo " ============== pushing image =================="
                 sh '''
-                docker push parchuk/frontEnd94:latest
+                docker push parchuk/frontend94:latest
                 '''
             }
         }
@@ -57,7 +57,7 @@ pipeline  {
             steps {
                 echo " ============== starting chatterbox server =================="
                 sh '''
-                docker run -d --restart=always --name bootshop -p 80:8000 parchuk/frontEnd94
+                docker run -d --restart=always --name bootshop -p 80:8000 parchuk/frontend94
                 '''
             }
         }
