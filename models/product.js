@@ -4,7 +4,7 @@ const sequelize = require("../helper/database");
 const Product = sequelize.define("product", {
     id: {
         type: Sequelize.INTEGER,
-        autoincrement: true,
+        autoIncrement: true,
         allowNull: false,
         primaryKey: true
     },
@@ -51,6 +51,6 @@ const Product = sequelize.define("product", {
     features: {
         type: Sequelize.STRING,
     }
-})
+});
 
 module.exports = Product;
