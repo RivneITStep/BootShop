@@ -1,5 +1,15 @@
+const Product = require("../models/product");
+
 exports.index = (req, res, next) => {
-    res.render("pages/index")
+    Product.findAll()
+    .then((products) => {
+      res.render("pages/index", {
+        products: products,
+        pageTitle: "All products",
+        path: 'pages/index'
+      });
+    })
+    .catch(err => console.log(err))
 }
 exports.faq = (req, res, next) => {
     res.render("pages/faq")
@@ -26,7 +36,15 @@ exports.product_summary = (req, res, next) => {
     res.render("pages/product_summary")
 }
 exports.products = (req, res, next) => {
-    res.render("pages/products")
+    Product.findAll()
+    .then((products) => {
+      res.render("pages/products", {
+        products: products,
+        pageTitle: "All products",
+        path: 'pages/products'
+      });
+    })
+    .catch(err => console.log(err))
 }
 exports.register = (req, res, next) => {
     res.render("pages/register")
