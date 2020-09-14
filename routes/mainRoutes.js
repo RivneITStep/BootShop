@@ -10,7 +10,7 @@ router.get("/delivery", mainController.delivery);
 router.get("/forgetpass", mainController.forgetpass);
 router.get("/legal_notice", mainController.legal_notice);
 router.get("/login", mainController.login);
-router.get("/product_details:id", mainController.product_details);
+router.get("/product_details/:id", mainController.product_details);
 router.get("/product_summary", mainController.product_summary);
 router.get("/products", mainController.products);
 router.get("/register", mainController.register);

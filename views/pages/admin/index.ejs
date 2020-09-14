@@ -191,14 +191,14 @@
                     <% products.forEach( product => { %>  
 				<li class="span3">
 				  <div class="thumbnail">
-					<a  href="product_details.html"><img src="<%= product.imageUrl%>" alt=""/></a>
+					<a  href="product_details"><img src="<%= product.imageUrl%>" alt=""/></a>
 					<div class="caption">
 					  <h5><%= product.title%></h5>
 					  <p> 
 						<%= product.descriptionShort%> 
 					  </p>
 					 
-					  <h4 style="text-align:center"><a class="btn" href="product_details.html"> <i class="icon-zoom-in"></i></a> <a class="btn" href="#">Add to <i class="icon-shopping-cart"></i></a> <a class="btn btn-primary" href="#"><%= product.price%> UAH</a></h4>
+					  <h4 style="text-align:center"><a class="btn" href="product_details"> <i class="icon-zoom-in"></i></a> <a class="btn" href="#">Add to <i class="icon-shopping-cart"></i></a> <a class="btn btn-primary" href="#"><%= product.price%> UAH</a></h4>
 					
 					</div>
 					<div style="width:100%;padding-left: 25%;">

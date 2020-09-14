@@ -268,7 +268,7 @@
           <% if (products.length > 0) { %> <% products.forEach( product => { %>
           <li class="span3">
             <div class="thumbnail">
-              <a href="product_details:<%= product.id %>"
+              <a href="product_details/<%= product.id %>"
                 ><img src="<%= product.imageUrl %>" alt="<%= product.title %>"
               /></a>
               <div class="caption">
@@ -276,7 +276,7 @@
                 <p><%= product.shortDescription %></p>
 
                 <h4 style="text-align: center">
-                  <a class="btn" href="product_details:<%= product.id %>">
+                  <a class="btn" href="product_details/<%= product.id %>">
                     <i class="icon-zoom-in"></i
                   ></a>
                   <a class="btn" href="#">Add to <i class="icon-shopping-cart"></i></a>

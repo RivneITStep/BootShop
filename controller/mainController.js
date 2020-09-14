@@ -31,15 +31,10 @@ exports.login = (req, res, next) => {
 };
 exports.product_details = (req, res, next) => {
     const id = req.params.id;
-    Product.findAll({
-        where: {
-            id: id
-        }
-    }).then(products => {
+    Product.findByPk(id).then(product => {
         res.render("pages/product_details", {
-            products: products,
+            product: product,
             pageTitle: "Product details",
-            // path: '/product_details'
         });
     }).catch(err => console.log(err));
 };
