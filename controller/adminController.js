@@ -13,6 +13,10 @@ exports.adminIdex = (req, res, next) => {
         .catch(err => console.log(err));
 };
 
+exports.adminPage = (req,res,next) =>{
+    res.render('pages/admin/admin_page');
+}
+
 exports.adminAddProduct = (req, res, next) => {
     console.log('adminAddProduct');
     res.render("pages/admin/add_product");
