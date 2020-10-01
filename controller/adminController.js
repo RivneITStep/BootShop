@@ -13,9 +13,9 @@ exports.adminIdex = (req, res, next) => {
         .catch(err => console.log(err));
 };
 
-exports.adminPage = (req,res,next) =>{
+exports.adminPage = (req, res, next) => {
     res.render('pages/admin/admin_page');
-}
+};
 
 exports.adminAddProduct = (req, res, next) => {
     console.log('adminAddProduct');
@@ -38,28 +38,27 @@ exports.adminAddProductPost = (req, res, next) => {
     const dimensions = req.body.dimensions;
     const displaySize = req.body.displaySize;
     const features = req.body.features;
-
-
-    Product.create({
-        title: title,
-        price: price,
-        sale: sale,
-        imageUrl: imageUrl,
-        quantity: quantity,
-        color: color,
-        shortDescription: shortDescription,
-        fullDescription: fullDescription,
-        brand: brand,
-        model: model,
-        released: released,
-        dimensions: dimensions,
-        displaySize: displaySize,
-        features: features,
-    }).then(result => {
-        //console.log('add product result =>',result);
-        console.log('product was added');
-        res.redirect('/admin/');
-    })
+    req.user
+        .createProduct({
+            title: title,
+            price: price,
+            sale: sale,
+            imageUrl: imageUrl,
+            quantity: quantity,
+            color: color,
+            shortDescription: shortDescription,
+            fullDescription: fullDescription,
+            brand: brand,
+            model: model,
+            released: released,
+            dimensions: dimensions,
+            displaySize: displaySize,
+            features: features,
+        }).then(result => {
+            //console.log('add product result =>',result);
+            console.log('product was added');
+            res.redirect('/admin/');
+        })
         .catch(err => console.log(err));
 };
 
