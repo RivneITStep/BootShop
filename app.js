@@ -12,6 +12,8 @@ const User = require("./models/users");
 const Product = require("./models/product");
 const Cart = require("./models/cart");
 const CartItem = require("./models/cartItem");
+const Order = require('./models/order');
+const OrderItem = require('./models/orderItem');
 
 // seed
 const seedProducts = require('./seedProducts');
@@ -33,7 +35,23 @@ app.use((req, res, next) => {
   User.findByPk(1)
     .then((user) => {
       req.user = user;
-      next();
+    }).then(result => {
+      req.user.getCart().then(cart => {
+        return cart.getProducts();
+      }).then(products => {
+        req.currentCart = products;
+        req.total = 0;
+        if (products.length > 0) {
+          req.total = products.map(product => {
+            let counter = 0;
+            counter += product.price * product.cartItem.quantity;
+            return counter;
+          });
+          req.total = req.total.reduce((total, counter) => total + counter, 0);
+        }
+
+        next();
+      });
     })
     .catch((err) => console.log(err));
 });
@@ -49,8 +67,12 @@ User.hasOne(Cart);
 Cart.belongsTo(User);
 Cart.belongsToMany(Product, { through: CartItem });
 Product.belongsToMany(Cart, { through: CartItem });
+Order.belongsTo(User);
+User.hasMany(Order);
+Order.belongsToMany(Product, { through: OrderItem });
 
 sequalize
+  // .sync({ force: true })
   .sync()
   .then(connectionRezult => {
     Product.findByPk(1).then(product => {

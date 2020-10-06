@@ -17,6 +17,10 @@ router.get("/special_offer", mainController.special_offer);
 router.get("/tac", mainController.tac);
 router.get("/product_summary", mainController.getCart);
 router.post("/product_summary", mainController.postCart);
-
+router.get('/orders', mainController.getOrders);
+router.post('/make-order', mainController.postOrders);
+router.post('/remove-cart-product', mainController.removeCartProduct);
+router.post('/minus-cart-product', mainController.minusCartProduct);
+router.post('/plus-cart-product', mainController.plusCartProduct);
 
 module.exports = router;
