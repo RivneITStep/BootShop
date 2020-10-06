@@ -7,19 +7,25 @@ exports.adminIdex = (req, res, next) => {
             res.render("pages/admin/index", {
                 products: products,
                 pageTitle: 'All products',
-                path: '/'
+                path: '/',
+                currentCart: req.currentCart,
+                total: req.total
             });
         })
         .catch(err => console.log(err));
 };
 
 exports.adminPage = (req, res, next) => {
-    res.render('pages/admin/admin_page');
+    res.render('pages/admin/admin_page', {
+        currentCart: req.currentCart
+    });
 };
 
 exports.adminAddProduct = (req, res, next) => {
     console.log('adminAddProduct');
-    res.render("pages/admin/add_product");
+    res.render("pages/admin/add_product", {
+        currentCart: req.currentCart
+    });
 };
 
 exports.adminAddProductPost = (req, res, next) => {
@@ -86,6 +92,7 @@ exports.adminProductEdit = (req, res, next) => {
             res.render('pages/admin/edit_product', {
                 product: product,
                 id: id,
+                currentCart: req.currentCart
                 //path:'/products_edit/',
             });
         })
@@ -147,4 +154,86 @@ exports.adminProductDetails = (req, res, next) => {
 exports.adminProductList = (req, res, next) => {
     console.log('adminProductList');
     //res.render("pages/contact")
+};
+
+exports.getOrders = (req, res, next) => {
+
+    req.user.getOrders({ include: ["products"] })
+        .then(orders => {
+            let productsItem = [];
+            orders.map(order => {
+                return order.products.map(product => {
+                    if (productsItem.find(item => item.id === product.id)) {
+                        productsItem.find(item => {
+                            if (item.id === product.id) {
+                                return item.orderItem.quantity += product.orderItem.quantity;
+                            }
+                        });
+                    }
+                    else {
+                        return productsItem.push(product);
+                    }
+                });
+            });
+            res.render('pages/admin/orders', {
+                orders: orders,
+                path: '/order',
+                currentCart: req.currentCart,
+                productsItem,
+                total: req.total
+            });
+        });
+};
+
+exports.removeCartProductAdmin = (req, res, next) => {
+    const productId = req.body.productId;
+    req.user.getOrders().then(orders => {
+        currentOrder = orders;
+        return orders.map(order => {
+            order.getProducts({ where: { id: productId } })
+                .then(products => {
+                    order.removeProducts(products);
+                });
+        });
+    }).then(result => {
+        res.redirect('admin/orders');
+    }).catch(err => console.log(err));
+};
+
+exports.plusCartProductAdmin = (req, res, next) => {
+    const productId = req.body.productId;
+    req.user
+        .getOrders()
+        .then((orders) => {
+            return orders.map(order => {
+                order.getProducts({ where: { id: productId } }).then(product => {
+                    console.log('prod => ', product);
+                    return product[0].orderItem.update({ quantity: product[0].orderItem.quantity + 1 });
+                    return product;
+                });
+            });
+        }).then(result => {
+            res.redirect('/admin/orders');
+        })
+        .catch(err => console.log(err));
+};
+
+exports.minusCartProductAdmin = (req, res, next) => {
+    const productId = req.body.productId;
+    req.user
+        .getOrders()
+        .then((orders) => {
+            return orders.map(order => {
+                order.getProducts({ where: { id: productId } }).then(product => {
+                    console.log('prod => ', product);
+                    if (product[0].orderItem.quantity > 0) {
+                        return product[0].orderItem.update({ quantity: product[0].orderItem.quantity - 1 });
+                    }
+                    return product;
+                });
+            });
+        }).then(result => {
+            res.redirect('/admin/orders');
+        })
+        .catch(err => console.log(err));
 };
