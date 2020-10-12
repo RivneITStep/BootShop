@@ -1,19 +1,29 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 const path = require("path");
 
 const PORT = 8000;
 const app = express();
 
-// include sequalize
-const sequalize = require("./helper/database");
+// include variables
+const { USERNAME, PASSWORD } = require('./helper/database');
+
+const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
+
+// mongoDB connection string
+const MONGO_URL = `mongodb+srv://${USERNAME}:${PASSWORD}@cluster0.imqbw.mongodb.net/bootshop?retryWrites=true&w=majority`;
+
+// create mongodb store
+const store = new MongoDBStore({
+  uri: MONGO_URL,
+  collection: 'session'
+});
 
 const User = require("./models/users");
 const Product = require("./models/product");
-const Cart = require("./models/cart");
-const CartItem = require("./models/cartItem");
 const Order = require('./models/order');
-const OrderItem = require('./models/orderItem');
 
 // seed
 const seedProducts = require('./seedProducts');
@@ -21,6 +31,8 @@ const seedProducts = require('./seedProducts');
 // middleware
 const mainRoutes = require("./routes/mainRoutes");
 const adminRoutes = require('./routes/adminRoutes');
+const authRoutes = require('./routes/authRoutes');
+
 //Error Page
 const errorController = require('./controller/errorController');
 
@@ -30,72 +42,49 @@ app.set("views", "views");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "static")));
 app.use(['/admin/products_edit/', '/product_details/:id', '/admin/'], express.static(path.join(__dirname, 'static')));
+app.use(session({ secret: 'secret', resave: false, saveUninitialized: false, cookie: { maxAge: 60000 }, store: store }));
 
 app.use((req, res, next) => {
-  User.findByPk(1)
+  User.findById("5f7ece409df3cd489c550709")
     .then((user) => {
       req.user = user;
-    }).then(result => {
-      req.user.getCart().then(cart => {
-        return cart.getProducts();
-      }).then(products => {
-        req.currentCart = products;
-        req.total = 0;
-        if (products.length > 0) {
-          req.total = products.map(product => {
-            let counter = 0;
-            counter += product.price * product.cartItem.quantity;
-            return counter;
-          });
-          req.total = req.total.reduce((total, counter) => total + counter, 0);
-        }
-
-        next();
-      });
+      next();
     })
     .catch((err) => console.log(err));
 });
 
 app.use(mainRoutes);
 app.use(adminRoutes);
+app.use(authRoutes);
 app.use(errorController.get404);
 
-// Relations
-Product.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
-User.hasMany(Product);
-User.hasOne(Cart);
-Cart.belongsTo(User);
-Cart.belongsToMany(Product, { through: CartItem });
-Product.belongsToMany(Cart, { through: CartItem });
-Order.belongsTo(User);
-User.hasMany(Order);
-Order.belongsToMany(Product, { through: OrderItem });
-
-sequalize
-  // .sync({ force: true })
-  .sync()
-  .then(connectionRezult => {
-    Product.findByPk(1).then(product => {
-      if (!product) {
+mongoose
+  .connect(
+    MONGO_URL,
+    { useNewUrlParser: true, useUnifiedTopology: true }
+  ).then(connectionRezult => {
+    Product.find().then(product => {
+      if (!product.length) {
         seedProducts.createProducts();
       }
       return product;
-    }).catch(err => console.log(err));
-    User.findByPk(1).then(user => {
-      if (!user) {
-        return User.create({
-          name: 'user1',
-          email: 'user@example.com',
-          password: '123'
-        });
-      }
-      return user;
-    }).then((user) => {
-      return user.createCart();
     });
   })
   .then((result) => {
+    User.findOne().then((user) => {
+      if (!user) {
+        const user = new User({
+          name: "master",
+          email: "master@gmail.com",
+          cart: {
+            items: [],
+          },
+        });
+        user.save();
+      }
+    });
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-    console.log('database OK!!!');
   })
-  .catch((err) => console.log(err));
+  .catch((err) => {
+    console.log(err);
+  });

@@ -1,21 +1,22 @@
-<%- include('../layouts/header.ejs')  %>
+<%- include('../layouts/header.ejs') %>
 
 <div id="mainBody">
     <div class="container">
         <div class="row">
-
-            <%- include('../layouts/sidebar.ejs')  %>
+            <%- include('../layouts/sidebar.ejs') %>
 
             <div class="span9">
                 <ul class="breadcrumb">
                     <li><a href="/">Home</a> <span class="divider">/</span></li>
-                    <li class="active"> Orders</li>
+                    <li class="active">Orders</li>
                 </ul>
-                <h3> Orders<a href="/" class="btn btn-large pull-right"><i class="icon-arrow-left"></i> Continue
-                        Shopping </a></h3>
+                <h3>
+                    Orders<a href="/" class="btn btn-large pull-right"><i class="icon-arrow-left"></i> Continue Shopping
+                    </a>
+                </h3>
                 <hr class="soft" />
 
-                <% if (productsItem.length > 0) { %>
+                <% if (orders.length > 0) { %>
                 <table class="table table-bordered">
                     <thead>
                         <tr>
@@ -28,25 +29,30 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% productsItem.forEach( product => { %>
+                        <% orders.forEach( order => { %> <% order.products.forEach(product => { %>
                         <tr>
-                            <td> <img width="60" src="<%= product.imageUrl %>" alt="<%= product.title %>" /></td>
-                            <td><%= product.shortDescription %></td>
                             <td>
-                                <div class="input-append"><input class="span1" style="width:85%"
-                                        value="<%= product.orderItem.quantity %>" id="appendedInputButtons" size="16"
-                                        type="text" disabled></div>
+                                <img width="60" src="<%= product.product.imageUrl %>"
+                                    alt="<%= product.product.title %>" />
                             </td>
-                            <td><%= product.price %></td>
-                            <td><%= product.sale %></td>
-                            <td><%= product.price * product.orderItem.quantity %></td>
-                            <% total += product.price * product.orderItem.quantity %>
+                            <td><%= product.product.shortDescription %></td>
+                            <td>
+                                <div class="input-append">
+                                    <input class="span1" style="width: 85%" value="<%= product.product.quantity %>"
+                                        id="appendedInputButtons" size="16" type="text" disabled />
+                                </div>
+                            </td>
+                            <td><%= product.product.price %></td>
+                            <td><%= product.product.sale %></td>
+                            <td><%= product.product.price * product.product.quantity %></td>
+                            <% total += product.product.price * product.product.quantity %>
                         </tr>
-                        <% }) %>
+                        <% }) %> <% }) %>
 
                         <tr>
-                            <td colspan="6" style="text-align:right"><strong>TOTAL =</strong></td>
-                            <td class="label label-important" style="display:block"> <strong> <%= total %> </strong>
+                            <td colspan="6" style="text-align: right"><strong>TOTAL =</strong></td>
+                            <td class="label label-important" style="display: block">
+                                <strong> <%= total %> </strong>
                             </td>
                         </tr>
                     </tbody>

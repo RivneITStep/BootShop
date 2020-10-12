@@ -8,8 +8,9 @@ exports.adminIdex = (req, res, next) => {
                 products: products,
                 pageTitle: 'All products',
                 path: '/',
-                currentCart: req.currentCart,
-                total: req.total
+                currentCart: 0,
+                total: 0,
+                isAuthenticated: req.session.isLoggenIn
             });
         })
         .catch(err => console.log(err));
@@ -92,7 +93,9 @@ exports.adminProductEdit = (req, res, next) => {
             res.render('pages/admin/edit_product', {
                 product: product,
                 id: id,
-                currentCart: req.currentCart
+                currentCart: 0,
+                total: 0,
+                isAuthenticated: req.session.isLoggenIn
                 //path:'/products_edit/',
             });
         })
@@ -178,9 +181,10 @@ exports.getOrders = (req, res, next) => {
             res.render('pages/admin/orders', {
                 orders: orders,
                 path: '/order',
-                currentCart: req.currentCart,
                 productsItem,
-                total: req.total
+                currentCart: 0,
+                total: 0,
+                isAuthenticated: req.session.isLoggenIn
             });
         });
 };

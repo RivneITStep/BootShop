@@ -1,6 +1,6 @@
 const Product = require('./models/product');
 exports.createProducts = () => {
-    return Product.bulkCreate([{
+    return Product.insertMany([{
         title: 'Телевізор Hisense H43B7100',
         price: 7000,
         sale: 4000,
