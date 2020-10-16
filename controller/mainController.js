@@ -149,13 +149,83 @@ exports.postOrders = (req, res, next) => {
                 }
             });
             Order.find({ "user.userId": req.user._id }).then(orders => {
-                console.log('orders => ', orders[0]);
+                let products = orders[orders.length - 1].products;
+                function prepareOrder() {
+                    let total = 0;
+                    let html = `<h3><span style="color:#000">New order from ${req.session.user.name}</span> ${req.session.user.email}</h3>`;
+                    for (let product of products) {
+                        total += product.product.price * product.quantity;
+                        html += `
+                        <!DOCTYPE html>
+                <html lang="en">
+                    <head>
+                        <style>
+                        .table th, .table td {
+                                padding: 8px;
+                                line-height: 20px;
+                                text-align: left;
+                                vertical-align: top;
+                                border-top: 1px solid #ddd;                            
+                        }
+                        .table-bordered th, .table-bordered td{
+                            border-left: 1px solid #ddd;
+                        }
+                        body{
+                           background-color: #eee;
+                        }
+                        </style>
+                </head>
+                <body>
+                     <table class="table table-bordered" style="border: 1px solid #ddd;border-collapse: separate;width: 100%;
+                       margin-bottom: 20px;font-size: 13px;">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Description</th>
+                            <th>Quantity/Update</th>
+                            <th>Price</th>
+                            <th>Discount</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <img width="60" src="${product.product.imageUrl}"
+                                    alt="" />
+                            </td>
+                            <td>${product.product.shortDescription}</td>
+                            <td>
+                                <div class="input-append">
+                                    <input class="span1" style="width: 85%" value="${product.quantity}"
+                                        id="appendedInputButtons" size="16" type="text" disabled />
+                                </div>
+                            </td>
+                            <td>${product.product.price}</td>
+                            <td>${product.product.sale}</td>
+                            <td colspan="2">${product.product.price * product.quantity}</td>
+                            
+                        </tr>
+                            <tr >
+                                <td colspan="2"><h5 style="margin-bottom: 50px;">Created: ${orders[orders.length - 1].createdAt} </h5></td>
+                                <td colspan="4" style="text-align: right;"><strong>TOTAL =</strong></td>
+                                <td class="label label-important" style="display: block;background-color: #b94a48;color:#fff;">
+                                <strong> ${total} </strong></td>
+                            </tr>
+                    </tbody>
+                </table>
+                </body>
+                 </html>
+                        `;
+                    };
+                    return html;
+                }
                 transporter.sendMail({
                     from: `"Bootshop" <${req.session.user.email}>`,
                     to: "sergeyparchuk1@gmail.com",
                     subject: `New order from ${req.session.user.name} <${req.session.user.email}>`,
                     text: `orders from `,
-                    html: `Orders from <strong>${req.session.user.name}</strong>  `
+                    html: prepareOrder()
                 }).catch(err => console.log(err));
             }).catch(err => console.log(err));
         })

@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const path = require("path");
+const flash = require('connect-flash');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require("csurf");
@@ -47,6 +48,8 @@ app.use(['/admin/products_edit/', '/product_details/:id', '/admin/'], express.st
 
 app.use(session({ secret: 'secret', resave: false, saveUninitialized: false, cookie: { maxAge: 600000 }, store: store }));
 
+// Connect Flesh
+app.use(flash());
 
 app.use(csrfProtection);
 
@@ -63,6 +66,8 @@ app.use((req, res, next) => {
 });
 
 app.use((req, res, next) => {
+  res.locals.success_msg = req.flash('success_msg');
+  res.locals.error_msg = req.flash('error_msg');
   res.locals.isAuthenticated = req.session.isLoggedIn;
   res.locals.csrfToken = req.csrfToken();
   next();
@@ -112,20 +117,6 @@ mongoose
     });
   })
   .then((result) => {
-    User.findOne().then((user) => {
-      if (!user) {
-        const user = new User({
-          name: "master",
-          email: "master@gmail.com",
-          role: 'admin',
-          password: '123456',
-          cart: {
-            items: [],
-          },
-        });
-        user.save();
-      }
-    });
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   })
   .catch((err) => {

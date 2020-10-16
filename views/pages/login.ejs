@@ -12,6 +12,9 @@
                 <hr class="soft" />
                 <div class="row">
                     <div class="span4">
+                    <% if (error_msg.length > 0) {%>
+                    <h5 style="color: red; text-align:center;"><%= error_msg %></h5>
+                    <% } %>
                         <div class="well">
                             <h5>ALREADY REGISTERED ?</h5>
                             <form action="/login" method="POST">
