@@ -30,30 +30,36 @@
 					<tbody>
 						<% products.forEach( product => { %>
 						<tr>
-							<td> <img width="60" src="<%= product.imageUrl %>" alt="<%= product.title %>" /></td>
-							<td><%= product.shortDescription %></td>
+							<td> <img width="60" src="<%= product.productId.imageUrl %>" alt="<%= product.productId.title %>" /></td>
+							<td><%= product.productId.shortDescription %></td>
 							<td>
 								<div class="input-append"><input class="span1" style="max-width:34px"
-										value="<%= product.cartItem.quantity %>" id="appendedInputButtons" size="16"
+										value="<%= product.quantity %>" id="appendedInputButtons" size="16"
 										type="text">
 									<form action="/minus-cart-product" method="POST" style="display: inline-block;">
 										<button class="btn" type="submit"><i class="icon-minus"></i></button>
-										<input type="hidden" name="productId" value="<%= product.id %>">
+										<input type="hidden" name="productId" value="<%= product.productId.id %>">
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
 									</form>
 									<form action="/plus-cart-product" method="POST" style="display: inline-block;">
 										<button class="btn" type="submit"><i class="icon-plus"></i></button>
-										<input type="hidden" name="productId" value="<%= product.id %>">
+										<input type="hidden" name="productId" value="<%= product.productId.id %>">
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
 									</form>
 									<form action="/remove-cart-product" method="POST" style="display: inline-block;">
 										<button class="btn btn-danger" type="submit"><i
 												class="icon-remove icon-white"></i></button>
-										<input type="hidden" name="productId" value="<%= product.id %>">
+										<input type="hidden" name="productId" value="<%= product.productId.id %>">
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
 									</form>
 								</div>
 							</td>
-							<td><%= product.price %></td>
-							<td><%= product.sale %></td>
-							<td><%= product.price * product.cartItem.quantity %></td>
+							<td><%= product.productId.price %></td>
+							<td><%= product.productId.sale %></td>
+							<td><%= product.productId.price * product.quantity %></td>
 						</tr>
 						<% }) %>
 						<tr>
@@ -65,6 +71,7 @@
 				</table>
 				<form action="/make-order" method="POST">
 					<button type="submit" class="btn btn-large pull-right">Order now </button>
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
 				</form>
 				<% } else { %>
 				<h2>No products found.</h2>

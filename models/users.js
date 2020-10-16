@@ -10,6 +10,14 @@ const userSchema = new Schema({
         type: String,
         required: true,
     },
+    role: {
+        type: String,
+        default: 'user'
+    },
+    password: {
+        type: String,
+        required: true,
+    },
     cart: {
         items: [
             {
@@ -30,7 +38,6 @@ userSchema.methods.addToCart = function (product) {
     });
     let newQuantity = 1;
     const updatedCartItems = [...this.cart.items];
-
     if (cartProductIndex >= 0) {
         newQuantity = this.cart.items[cartProductIndex].quantity + 1;
         updatedCartItems[cartProductIndex].quantity = newQuantity;
@@ -50,6 +57,36 @@ userSchema.methods.addToCart = function (product) {
 userSchema.methods.removeFromCart = function (productId) {
     const updatedCartItems = this.cart.items.filter((item) => {
         return item.productId.toString() !== productId.toString();
+    });
+    this.cart.items = updatedCartItems;
+    return this.save();
+};
+
+userSchema.methods.plusItemCart = function (productId) {
+    const updatedCartItems = this.cart.items.map((item) => {
+        if (item.productId.toString() === productId.toString()) {
+            return {
+                _id: item._id,
+                productId,
+                quantity: item.quantity + 1
+            };
+        }
+        return item;
+    });
+    this.cart.items = updatedCartItems;
+    return this.save();
+};
+
+userSchema.methods.minusItemCart = function (productId) {
+    const updatedCartItems = this.cart.items.map((item) => {
+        if (item.productId.toString() === productId.toString() && item.quantity > 1) {
+            return {
+                _id: item._id,
+                productId,
+                quantity: item.quantity - 1
+            };
+        }
+        return item;
     });
     this.cart.items = updatedCartItems;
     return this.save();

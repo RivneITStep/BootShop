@@ -1,8 +1,10 @@
 const Product = require('../models/product');
 //const { products } = require('./mainController');
+const Order = require("../models/order");
+
 
 exports.adminIdex = (req, res, next) => {
-    Product.findAll()
+    Product.find()
         .then((products) => {
             res.render("pages/admin/index", {
                 products: products,
@@ -10,7 +12,8 @@ exports.adminIdex = (req, res, next) => {
                 path: '/',
                 currentCart: 0,
                 total: 0,
-                isAuthenticated: req.session.isLoggenIn
+                isAuthenticated: req.session.isLoggedIn,
+                user: req.user
             });
         })
         .catch(err => console.log(err));
@@ -18,68 +21,53 @@ exports.adminIdex = (req, res, next) => {
 
 exports.adminPage = (req, res, next) => {
     res.render('pages/admin/admin_page', {
-        currentCart: req.currentCart
+        currentCart: 0,
+        isAuthenticated: req.session.isLoggedIn,
+        user: req.session.user
     });
 };
 
 exports.adminAddProduct = (req, res, next) => {
     console.log('adminAddProduct');
     res.render("pages/admin/add_product", {
-        currentCart: req.currentCart
+        currentCart: 0,
+        isAuthenticated: req.session.isLoggedIn,
+        user: req.user
     });
 };
 
 exports.adminAddProductPost = (req, res, next) => {
+    console.log('User Id =>', req.session.user);
+    const { title, price, sale, imageURL, quantity, color, shortDescription, fullDescription, brand, model, released, dimensions, displaySize, features } = req.body;
 
-    const title = req.body.title;
-    const price = req.body.price;
-    const sale = req.body.sale;
-    const imageUrl = req.body.imageURL;
-    const quantity = req.body.quantity;
-    const color = req.body.color;
-    const shortDescription = req.body.shortDescription;
-    const fullDescription = req.body.fullDescription;
-    const brand = req.body.brand;
-    const model = req.body.model;
-    const released = req.body.released;
-    const dimensions = req.body.dimensions;
-    const displaySize = req.body.displaySize;
-    const features = req.body.features;
-    req.user
-        .createProduct({
-            title: title,
-            price: price,
-            sale: sale,
-            imageUrl: imageUrl,
-            quantity: quantity,
-            color: color,
-            shortDescription: shortDescription,
-            fullDescription: fullDescription,
-            brand: brand,
-            model: model,
-            released: released,
-            dimensions: dimensions,
-            displaySize: displaySize,
-            features: features,
-        }).then(result => {
-            //console.log('add product result =>',result);
-            console.log('product was added');
-            res.redirect('/admin/');
-        })
+    const product = new Product({
+        title,
+        price,
+        sale,
+        imageUrl: imageURL,
+        quantity,
+        color,
+        shortDescription,
+        fullDescription,
+        brand,
+        model,
+        released,
+        dimensions,
+        displaySize,
+        features,
+        userId: req.session.user
+    });
+    product.save().then(result => {
+        console.log('product was added');
+        res.redirect('/admin/');
+    })
         .catch(err => console.log(err));
 };
 
 exports.adminProductDelete = (req, res, next) => {
     console.log('Delete Course');
-    const id = req.params.id;
-    Product.destroy(
-        {
-            where: {
-                id: id
-            },
-            force: true
-        }
-    ).then((product) => {
+    const _id = req.params.id;
+    Product.findOneAndDelete({ _id }).then((product) => {
         res.redirect('/admin/');
     })
         .catch((err) => console.log(err));
@@ -87,60 +75,40 @@ exports.adminProductDelete = (req, res, next) => {
 
 exports.adminProductEdit = (req, res, next) => {
     console.log('adminEditProduct');
-    const id = req.params.id;
-    Product.findByPk(id)
+    const prodId = req.params.productId;
+    Product.findById(prodId)
         .then((product) => {
             res.render('pages/admin/edit_product', {
                 product: product,
-                id: id,
                 currentCart: 0,
-                total: 0,
-                isAuthenticated: req.session.isLoggenIn
-                //path:'/products_edit/',
+                isAuthenticated: req.session.isLoggedIn,
+                user: req.user
             });
         })
         .catch((err) => console.log(err));
 };
 
 exports.adminEditConfirm = (req, res, next) => {
-    console.log('EditConfirm');
-    const id = req.params.id;
-    const title = req.body.title;
-    const price = req.body.price;
-    const sale = req.body.sale;
-    const imageUrl = req.body.imageURL;
-    const quantity = req.body.quantity;
-    const color = req.body.color;
-    const shortDescription = req.body.shortDescription;
-    const fullDescription = req.body.fullDescription;
-    const brand = req.body.brand;
-    const model = req.body.model;
-    const released = req.body.released;
-    const dimensions = req.body.dimensions;
-    const displaySize = req.body.displaySize;
-    const features = req.body.features;
+    const prodId = req.params.productId;
+    const { title, price, sale, imageURL, quantity, color, shortDescription, fullDescription, brand, model, released, dimensions, displaySize, features } = req.body;
 
-    Product.update({
-        title: title,
-        price: price,
-        sale: sale,
-        imageUrl: imageUrl,
-        quantity: quantity,
-        color: color,
-        shortDescription: shortDescription,
-        fullDescription: fullDescription,
-        brand: brand,
-        model: model,
-        released: released,
-        dimensions: dimensions,
-        displaySize: displaySize,
-        features: features,
-    },
-        {
-            where: {
-                id: id
-            }
-        }
+    Product.findByIdAndUpdate(prodId, {
+        title,
+        price,
+        sale,
+        imageUrl: imageURL,
+        quantity,
+        color,
+        shortDescription,
+        fullDescription,
+        brand,
+        model,
+        released,
+        dimensions,
+        displaySize,
+        features,
+        userId: req.session.user
+    }
     ).then(result => {
         //console.log('add product result =>',result);
         console.log('product updated');
@@ -161,83 +129,77 @@ exports.adminProductList = (req, res, next) => {
 
 exports.getOrders = (req, res, next) => {
 
-    req.user.getOrders({ include: ["products"] })
-        .then(orders => {
-            let productsItem = [];
-            orders.map(order => {
-                return order.products.map(product => {
-                    if (productsItem.find(item => item.id === product.id)) {
-                        productsItem.find(item => {
-                            if (item.id === product.id) {
-                                return item.orderItem.quantity += product.orderItem.quantity;
-                            }
-                        });
-                    }
-                    else {
-                        return productsItem.push(product);
-                    }
-                });
-            });
+    Order.find()
+        .then((orders) => {
+            // console.log('orders => ', orders.id);
             res.render('pages/admin/orders', {
-                orders: orders,
+                orders,
                 path: '/order',
-                productsItem,
                 currentCart: 0,
                 total: 0,
-                isAuthenticated: req.session.isLoggenIn
+                isAuthenticated: req.session.isLoggedIn,
+                user: req.user
             });
         });
 };
 
-exports.removeCartProductAdmin = (req, res, next) => {
-    const productId = req.body.productId;
-    req.user.getOrders().then(orders => {
-        currentOrder = orders;
-        return orders.map(order => {
-            order.getProducts({ where: { id: productId } })
-                .then(products => {
-                    order.removeProducts(products);
-                });
-        });
-    }).then(result => {
+exports.removeOrder = (req, res, next) => {
+    const orderId = req.body.orderId;
+    Order.findOneAndDelete(orderId).then(result => {
         res.redirect('admin/orders');
-    }).catch(err => console.log(err));
+    });
 };
 
-exports.plusCartProductAdmin = (req, res, next) => {
+exports.removeOrderItem = (req, res, next) => {
     const productId = req.body.productId;
-    req.user
-        .getOrders()
-        .then((orders) => {
-            return orders.map(order => {
-                order.getProducts({ where: { id: productId } }).then(product => {
-                    console.log('prod => ', product);
-                    return product[0].orderItem.update({ quantity: product[0].orderItem.quantity + 1 });
-                    return product;
-                });
+    const orderId = req.body.orderId;
+    Order.find({ _id: orderId }).then(order => {
+
+        if (order[0].products.length > 1) {
+            let newProductArr = order[0].products.filter(product => product.id.toString() !== productId.toString());
+
+            Order.findOneAndUpdate({ _id: orderId }, { products: newProductArr }).then(result => {
+                res.redirect('admin/orders');
             });
-        }).then(result => {
-            res.redirect('/admin/orders');
-        })
-        .catch(err => console.log(err));
+        }
+        else {
+            Order.findOneAndDelete(orderId).then(result => {
+                res.redirect('admin/orders');
+            });
+        }
+    });
 };
 
-exports.minusCartProductAdmin = (req, res, next) => {
+exports.plusItemOrder = (req, res, next) => {
     const productId = req.body.productId;
-    req.user
-        .getOrders()
-        .then((orders) => {
-            return orders.map(order => {
-                order.getProducts({ where: { id: productId } }).then(product => {
-                    console.log('prod => ', product);
-                    if (product[0].orderItem.quantity > 0) {
-                        return product[0].orderItem.update({ quantity: product[0].orderItem.quantity - 1 });
-                    }
-                    return product;
-                });
-            });
-        }).then(result => {
-            res.redirect('/admin/orders');
-        })
-        .catch(err => console.log(err));
+    const orderId = req.body.orderId;
+    Order.find({ _id: orderId }).then(order => {
+        let newQuantity = order[0].products.filter(product => {
+            if (product.id.toString() === productId.toString()) {
+                return product.quantity = product.quantity + 1;
+            }
+            return product;
+        });
+        console.log('newQan', newQuantity);
+        Order.findOneAndUpdate({ _id: orderId }, { products: newQuantity }).then(result => {
+            res.redirect('admin/orders');
+        });
+    });
+};
+
+exports.minusItemOrder = (req, res, next) => {
+    const productId = req.body.productId;
+    const orderId = req.body.orderId;
+    Order.find({ _id: orderId }).then(order => {
+        let newQuantity = order[0].products.filter(product => {
+            if (product.id.toString() === productId.toString() && product.quantity > 1) {
+                return product.quantity = product.quantity - 1;
+            }
+            return product;
+        });
+        console.log('newQan', newQuantity);
+        Order.findOneAndUpdate({ _id: orderId }, { products: newQuantity }).then(result => {
+            res.redirect('admin/orders');
+        });
+    });
 };

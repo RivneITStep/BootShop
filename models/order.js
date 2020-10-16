@@ -18,8 +18,8 @@ const orderSchema = new Schema({
       type: Schema.Types.ObjectId,
       required: true,
       ref: "User",
-    },
+    }
   },
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model("Order", orderSchema);

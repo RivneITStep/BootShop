@@ -246,11 +246,15 @@
                   <a class="btn" href="product_details/<%= product.id %>">
                     <i class="icon-zoom-in"></i></a>
                   <a style="margin-left:40px;" class="btn btn-primary" href="#"><%= product.price %> UAH</a>
+             <% if (isAuthenticated && user.role !== 'admin') {%>
                   <form action="/product_summary" method="post">
                     <button style="margin-top:20px;" class="btn" type="submit">Add to <i
                         class="icon-shopping-cart"></i></button>
+                        
                     <input type="hidden" name="productId" value="<%= product.id %>">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                   </form>
+                  <% }%>
                 </h4>
               </div>
             </div>

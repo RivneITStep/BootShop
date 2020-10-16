@@ -15,6 +15,7 @@ exports.createProducts = () => {
         dimensions: '969 х 612 х 193 мм',
         displaySize: 50,
         features: 'Чітке зображення 4К Телевізори компанії Hisense з сертифікацією UHD підтримують роздільну здатність, що в 4 рази перевищує роздільну здатність формату FULL HD, дозволяючи побачити ще більше деталей зображення. ',
+        userId: '5f86ce9ef2bd3e172e8702bb'
     },
     {
         title: 'Телевізор Kivi 40F600GU',
@@ -31,12 +32,13 @@ exports.createProducts = () => {
         dimensions: '912x594x230 мм',
         displaySize: 50,
         features: '  Краще зображення LED дисплея Матриця класу А+ від провідних світових виробників',
+        userId: '5f86ce9ef2bd3e172e8702bb'
     },
     {
         title: 'Телевізор Samsung UE50NU7002UXUA',
         price: 5000,
         sale: 3000,
-        imageUrl: 'https://i2.rozetka.ua/goods/19717154/samsung_ue50nu7002uxua_images_19717154965.jpg',
+        imageUrl: 'https://stylus.ua/thumbs/378x378/79/0b/1554681.jpeg',
         quantity: 20,
         color: 'black',
         shortDescription: 'Діагональ екрана\r\n32\"\r\nРоздільна здатність\r\n1920x1080\r\nSmart-платформа\r\nTizen\r\nДіапазони цифрового тюнера\r\nDVB-C\r\nDVB-S\r\nDVB-S2\r\nDVB-T\r\nDVB-T2',
@@ -47,12 +49,13 @@ exports.createProducts = () => {
         dimensions: '3840x2160 мм',
         displaySize: 50,
         features: '  Краще зображення LED дисплея Матриця класу А+ від провідних світових виробників',
+        userId: '5f86ce9ef2bd3e172e8702bb'
     },
     {
         title: 'Телевізор Samsung UE32T5300AUXUA',
         price: 7000,
         sale: 6999,
-        imageUrl: 'https://i8.rozetka.ua/goods/19716777/samsung_ue32t5300auxua_images_19716777451.jpg',
+        imageUrl: 'https://stylus.ua/thumbs/378x378/2a/83/1552176.jpeg',
         quantity: 45,
         color: 'black',
         shortDescription: 'Діагональ екрана\r\n50\"\r\nРоздільна здатність\r\n3840x2160\r\nSmart-платформа\r\nTizen\r\nДіапазони цифрового тюнера\r\nDVB-C\r\nDVB-S2\r\nDVB-T2\r\nЧастота оновлення\r\n1300 Гц (PQI)',
@@ -63,5 +66,6 @@ exports.createProducts = () => {
         dimensions: '969 х 612 х 193 мм мм',
         displaySize: 50,
         features: 'Зображення у ваших улюблених ТБ-програмах і фільмах тепер не відрізняється від реальності. Роздільна здатність Full HD удвічі перевищує роздільну здатність зображення HD-телевізорів.',
+        userId: '5f86ce9ef2bd3e172e8702bb'
     }]);
 };

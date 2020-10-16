@@ -38,23 +38,27 @@
                             <td><%= product.product.shortDescription %></td>
                             <td>
                                 <div class="input-append">
-                                    <input class="span1" style="width: 85%" value="<%= product.product.quantity %>"
+                                    <input class="span1" style="width: 85%" value="<%= product.quantity %>"
                                         id="appendedInputButtons" size="16" type="text" disabled />
                                 </div>
                             </td>
                             <td><%= product.product.price %></td>
                             <td><%= product.product.sale %></td>
-                            <td><%= product.product.price * product.product.quantity %></td>
-                            <% total += product.product.price * product.product.quantity %>
+                            <td colspan="2"><%= product.product.price * product.quantity %></td>
+                            <% total += product.product.price * product.quantity %>
                         </tr>
-                        <% }) %> <% }) %>
+                           
 
-                        <tr>
-                            <td colspan="6" style="text-align: right"><strong>TOTAL =</strong></td>
-                            <td class="label label-important" style="display: block">
-                                <strong> <%= total %> </strong>
-                            </td>
-                        </tr>
+                        <% }) %>
+
+                            <tr >
+                                <td colspan="2"><h5 style="margin-bottom: 50px;">Created: <%= order.createdAt%></h5></td>
+                                <td colspan="4" style="text-align: right"><strong>TOTAL =</strong></td>
+                                <td class="label label-important" style="display: block">
+                                <strong> <%= total %> </strong></td>
+                            </tr>
+                        <% }) %>
+
                     </tbody>
                 </table>
                 <% } else { %>
